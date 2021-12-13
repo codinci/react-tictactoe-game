@@ -21,23 +21,29 @@ class Board extends React.Component {
         );
     }
 
+    renderRow(row) {
+        return (
+            <div key={row} className="board-row">
+                {this.renderSquare(row * 3 + 0)}
+                {this.renderSquare(row * 3 + 1)}
+                {this.renderSquare(row * 3 + 2)}
+            </div>
+        );
+    }
+
+    renderBoard() {
+        const rows = [];
+        for (let row = 0; row < 3; row++){
+            rows.push(this.renderRow(row));
+        }
+        return rows;
+    }
+
     render() {        
         return (
             <div>
-                <div className="board-row">
-                    {this.renderSquare(0)}
-                    {this.renderSquare(1)}
-                    {this.renderSquare(2)}
-                </div>
-                <div className="board-row">
-                    {this.renderSquare(3)}
-                    {this.renderSquare(4)}
-                    {this.renderSquare(5)}
-                </div>
-                <div className="board-row">
-                    {this.renderSquare(6)}
-                    {this.renderSquare(7)}
-                    {this.renderSquare(8)}
+                <div>
+                    {this.renderBoard()}
                 </div>
             </div>
         );
@@ -96,10 +102,13 @@ class Game extends React.Component {
         }) 
         
         let status;
-        if (winner) {
-            status ='Winner ' + winner;
-        } else {
+        if (winner && winner != 'draw') {
+            status = 'Winner ' + winner;
+        } else if(winner && winner === 'draw'){
+            status = 'Its a ' + winner;
+        }else {
             status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+                       
         }
 
         return (
@@ -130,10 +139,13 @@ function calculateWinner(squares) {
         [0, 4, 8],
         [2, 4, 6],
     ];
+
     for (let i = 0; i < lines.length; i++) {
         const [a, b, c] = lines[i];
         if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
             return squares[a];
+        } else if(!squares.includes(null)) {
+            return 'draw';
         }
     }
     return null;
